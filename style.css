@@ -1,0 +1,23 @@
+body{
+    background-color: #010a1a;
+}
+
+#start{
+    background-color: #059500;
+    color: #fff;
+}
+
+#end{
+    background-color: #d62709;
+    color: #fff;
+}
+
+#pause{
+    background-color: #0e5de6;
+    color: #fff;
+}
+
+#resume{
+    background-color: #cc7e0a;
+    color: #fff;
+}
