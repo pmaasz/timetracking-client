@@ -1,0 +1,14 @@
+{
+  "name": "timetracking-client",
+  "version": "0.0.1-alpha",
+  "description": "time tracking for employees via a desktop app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Philip Maaß",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^19.0.8"
+  }
+}
