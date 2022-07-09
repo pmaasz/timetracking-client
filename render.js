@@ -7,20 +7,20 @@ const buttonContainer = document.getElementById('button-container');
 const clockContainer = document.getElementById('clock');
 const timerContainer = document.getElementById('timer');
 
-let timer = null;
-
-let clock = new Date();
-clockContainer.innerText = clock.toLocaleTimeString('de-DE', {
+let timer = "00:00";
+let clock = new Date().toLocaleTimeString('de-DE', {
     hour12: false,
     hour: '2-digit',
     minute: '2-digit',
 });
 
-// todo remove and add buttons to DOM
+clockContainer.innerText = clock;
+timerContainer.innerText = timer;
 
 buttonContainer.removeChild(pauseButton);
 buttonContainer.removeChild(resumeButton);
 buttonContainer.removeChild(endButton);
+
 content.removeChild(timerContainer);
 
 startButton.addEventListener('click', () => {
@@ -31,8 +31,6 @@ startButton.addEventListener('click', () => {
 
     content.removeChild(clockContainer);
     content.appendChild(timerContainer);
-
-    timerContainer.innerText = '00:00';
 });
 
 pauseButton.addEventListener('click', () => {
@@ -44,12 +42,6 @@ pauseButton.addEventListener('click', () => {
 
     content.removeChild(timerContainer);
     content.appendChild(clockContainer);
-
-    timerContainer.innerText = clock.toLocaleTimeString('de-DE', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-    });
 });
 
 resumeButton.addEventListener('click', () => {
@@ -61,8 +53,6 @@ resumeButton.addEventListener('click', () => {
 
     content.removeChild(clockContainer);
     content.appendChild(timerContainer);
-
-    timerContainer.innerText = '00:00';
 });
 
 endButton.addEventListener('click', () => {
@@ -81,10 +71,18 @@ endButton.addEventListener('click', () => {
 
     content.removeChild(timerContainer);
     content.appendChild(clockContainer);
+});
 
-    timerContainer.innerText = clock.toLocaleTimeString('de-DE', {
+function setTimer() {
+    timerContainer.innerText = timer;
+}
+
+function getTime() {
+    clock = new Date().toLocaleTimeString('de-DE', {
         hour12: false,
         hour: '2-digit',
         minute: '2-digit',
     });
-});
+    clockContainer.innerHTML = clock;
+}
+setInterval(getTime, 1000);
