@@ -25,6 +25,7 @@ content.removeChild(timerContainer);
 
 startButton.addEventListener('click', () => {
     buttonContainer.removeChild(startButton);
+
     buttonContainer.appendChild(pauseButton);
     buttonContainer.appendChild(endButton);
 
@@ -65,9 +66,17 @@ resumeButton.addEventListener('click', () => {
 });
 
 endButton.addEventListener('click', () => {
-    buttonContainer.removeChild(pauseButton);
-    buttonContainer.removeChild(endButton);
+    //if buttonContainer has child pausebutton, remove it
+    if (buttonContainer.contains(pauseButton)) {
+        buttonContainer.removeChild(pauseButton);
+    }
 
+    //if buttonContainer has child resumebutton, remove it
+    if (buttonContainer.contains(resumeButton)) {
+        buttonContainer.removeChild(resumeButton);
+    }
+
+    buttonContainer.removeChild(endButton);
     buttonContainer.appendChild(startButton);
 
     content.removeChild(timerContainer);
