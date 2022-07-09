@@ -1,11 +1,11 @@
 body{
     background-color: #010a1a;
-    color: white;
+    color: #bdbdbd;
     font-family: 'Roboto Mono', monospace;
 }
 
 button{
-    color: white;
+    background-color: #010a1a;
     display: inline-block;
     font-weight: 400;
     text-align: center;
@@ -42,17 +42,41 @@ button{
 }
 
 #start{
+    color: #15b004;
+    border: 1px solid #15b004;
+}
+
+#start:hover{
     background-color: #15b004;
+    color: #010a1a;;
 }
 
 #end{
+    color: #c40202;
+    border: 1px solid #c40202;
+}
+
+#end:hover{
     background-color: #c40202;
+    color: #010a1a;;
 }
 
 #pause{
+    color: #0541e8;
+    border: 1px solid #0541e8;
+}
+
+#pause:hover{
     background-color: #0541e8;
+    color: #010a1a;;
 }
 
 #resume{
+    color: #e89105;
+    border: 1px solid #e89105;
+}
+
+#resume:hover{
     background-color: #e89105;
+    color: #010a1a;;
 }
