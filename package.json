@@ -1,6 +1,6 @@
 {
   "name": "timetracking-client",
-  "version": "0.0.1-alpha",
+  "version": "0.1.0-alpha",
   "description": "time tracking for employees via a desktop app",
   "main": "main.js",
   "scripts": {
