@@ -7,7 +7,7 @@ const buttonContainer = document.getElementById('button-container');
 const clockContainer = document.getElementById('clock');
 const timerContainer = document.getElementById('timer');
 
-let timer;
+let timer = "00:00";
 let startTime;
 let pauseTime;
 let resumeTime;
@@ -28,7 +28,6 @@ buttonContainer.removeChild(endButton);
 content.removeChild(timerContainer);
 
 startButton.addEventListener('click', () => {
-    timer = "00:00";
     startTime = new Date();
 
     buttonContainer.removeChild(startButton);
