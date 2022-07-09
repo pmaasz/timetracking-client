@@ -4,10 +4,13 @@ const resumeButton = document.getElementById('resume');
 const endButton = document.getElementById('end');
 const content = document.getElementById('content');
 const buttonContainer = document.getElementById('button-container');
+const clockContainer = document.getElementById('clock');
+const timerContainer = document.getElementById('timer');
 
-let time = new Date();
+let timer = null;
 
-content.innerText = time.toLocaleTimeString('de-DE', {
+let clock = new Date();
+clockContainer.innerText = clock.toLocaleTimeString('de-DE', {
     hour12: false,
     hour: '2-digit',
     minute: '2-digit',
@@ -18,11 +21,17 @@ content.innerText = time.toLocaleTimeString('de-DE', {
 buttonContainer.removeChild(pauseButton);
 buttonContainer.removeChild(resumeButton);
 buttonContainer.removeChild(endButton);
+content.removeChild(timerContainer);
 
 startButton.addEventListener('click', () => {
     buttonContainer.removeChild(startButton);
     buttonContainer.appendChild(pauseButton);
     buttonContainer.appendChild(endButton);
+
+    content.removeChild(clockContainer);
+    content.appendChild(timerContainer);
+
+    timerContainer.innerText = '00:00';
 });
 
 pauseButton.addEventListener('click', () => {
@@ -31,6 +40,15 @@ pauseButton.addEventListener('click', () => {
 
     buttonContainer.appendChild(resumeButton);
     buttonContainer.appendChild(endButton);
+
+    content.removeChild(timerContainer);
+    content.appendChild(clockContainer);
+
+    timerContainer.innerText = clock.toLocaleTimeString('de-DE', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 });
 
 resumeButton.addEventListener('click', () => {
@@ -39,6 +57,11 @@ resumeButton.addEventListener('click', () => {
 
     buttonContainer.appendChild(pauseButton);
     buttonContainer.appendChild(endButton);
+
+    content.removeChild(clockContainer);
+    content.appendChild(timerContainer);
+
+    timerContainer.innerText = '00:00';
 });
 
 endButton.addEventListener('click', () => {
@@ -46,4 +69,13 @@ endButton.addEventListener('click', () => {
     buttonContainer.removeChild(endButton);
 
     buttonContainer.appendChild(startButton);
+
+    content.removeChild(timerContainer);
+    content.appendChild(clockContainer);
+
+    timerContainer.innerText = clock.toLocaleTimeString('de-DE', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 });
