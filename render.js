@@ -57,7 +57,7 @@ resumeButton.addEventListener('click', () => {
     buttonContainer.removeChild(resumeButton);
     buttonContainer.removeChild(endButton);
 
-    buttonContainer.appendChild(pauseButton);
+    //buttonContainer.appendChild(pauseButton); no second pause currently possible
     buttonContainer.appendChild(endButton);
 
     content.removeChild(clockContainer);
@@ -106,7 +106,19 @@ function getTime() {
     if (startTime && !pauseTime) {
         timer = clock.getTime() - startTime.getTime();
     } else if (resumeTime) {
-        timer = (clock.getTime() - startTime.getTime()) + (clock.getTime() - resumeTime.getTime()) - (resumeTime.getTime() - pauseTime.getTime());
+        let pause = resumeTime.getTime() - pauseTime.getTime();
+        let beforePauseHours = clock.getTime() - startTime.getTime();
+        let afterPauseHours = clock.getTime() - resumeTime.getTime();
+
+        if(pause < (1000*60*30) && beforePauseHours >= (1000*60*60*6)) {
+            pause = 1000*60*30;
+        }
+
+        if(beforePauseHours + afterPauseHours >= (1000*60*60*9) && pause < (1000*60*45)) {
+            pause = 1000*60*45;
+        }
+
+        timer = beforePauseHours + afterPauseHours - pause;
         timer.toString();
     }
 
