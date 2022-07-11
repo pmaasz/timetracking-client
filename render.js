@@ -28,7 +28,7 @@ buttonContainer.removeChild(endButton);
 content.removeChild(timerContainer);
 
 startButton.addEventListener('click', () => {
-    postData('https://example.com/answer', { answer: 42 }).then(data => {
+    postData( "http://0.0.0.0:9123/start", { answer: 42 }).then(data => {
         console.log(data); // JSON data parsed by `data.json()` call
         //@todo get Value from Backend
         startTime = new Date();
@@ -43,7 +43,7 @@ startButton.addEventListener('click', () => {
 });
 
 pauseButton.addEventListener('click', () => {
-    postData('https://example.com/answer', { answer: 42 }).then(data => {
+    postData("http://0.0.0.0:9123/pause", { answer: 42 }).then(data => {
         console.log(data); // JSON data parsed by `data.json()` call
         //@todo get Value from Backend
         pauseTime = new Date();
@@ -59,7 +59,7 @@ pauseButton.addEventListener('click', () => {
 });
 
 resumeButton.addEventListener('click', () => {
-    postData('https://example.com/answer', { answer: 42 }).then(data => {
+    postData("http://0.0.0.0:9123/resume", { answer: 42 }).then(data => {
         console.log(data); // JSON data parsed by `data.json()` call
         //@todo get Value from Backend
         resumeTime = new Date();
@@ -75,7 +75,7 @@ resumeButton.addEventListener('click', () => {
 });
 
 endButton.addEventListener('click', () => {
-    postData('https://example.com/answer', { answer: 42 }).then(data => {
+    postData("http://0.0.0.0:9123/endButton", { answer: 42 }).then(data => {
         console.log(data); // JSON data parsed by `data.json()` call
         //@todo get Value from Backend
         endTime = new Date();
