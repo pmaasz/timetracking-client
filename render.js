@@ -28,58 +28,73 @@ buttonContainer.removeChild(endButton);
 content.removeChild(timerContainer);
 
 startButton.addEventListener('click', () => {
-    startTime = new Date();
+    postData('https://example.com/answer', { answer: 42 }).then(data => {
+        console.log(data); // JSON data parsed by `data.json()` call
+        //@todo get Value from Backend
+        startTime = new Date();
 
-    buttonContainer.removeChild(startButton);
+        buttonContainer.removeChild(startButton);
+        buttonContainer.appendChild(pauseButton);
+        buttonContainer.appendChild(endButton);
 
-    buttonContainer.appendChild(pauseButton);
-    buttonContainer.appendChild(endButton);
-
-    content.removeChild(clockContainer);
-    content.appendChild(timerContainer);
+        content.removeChild(clockContainer);
+        content.appendChild(timerContainer);
+    });
 });
 
 pauseButton.addEventListener('click', () => {
-    pauseTime = new Date();
-    buttonContainer.removeChild(pauseButton);
-    buttonContainer.removeChild(endButton);
+    postData('https://example.com/answer', { answer: 42 }).then(data => {
+        console.log(data); // JSON data parsed by `data.json()` call
+        //@todo get Value from Backend
+        pauseTime = new Date();
 
-    buttonContainer.appendChild(resumeButton);
-    buttonContainer.appendChild(endButton);
+        buttonContainer.removeChild(pauseButton);
+        buttonContainer.removeChild(endButton);
+        buttonContainer.appendChild(resumeButton);
+        buttonContainer.appendChild(endButton);
 
-    content.removeChild(timerContainer);
-    content.appendChild(clockContainer);
+        content.removeChild(timerContainer);
+        content.appendChild(clockContainer);
+    });
 });
 
 resumeButton.addEventListener('click', () => {
-    resumeTime = new Date();
-    buttonContainer.removeChild(resumeButton);
-    buttonContainer.removeChild(endButton);
+    postData('https://example.com/answer', { answer: 42 }).then(data => {
+        console.log(data); // JSON data parsed by `data.json()` call
+        //@todo get Value from Backend
+        resumeTime = new Date();
 
-    //buttonContainer.appendChild(pauseButton); no second pause currently possible
-    buttonContainer.appendChild(endButton);
+        buttonContainer.removeChild(resumeButton);
+        buttonContainer.removeChild(endButton);
+        //buttonContainer.appendChild(pauseButton); no second pause currently possible
+        buttonContainer.appendChild(endButton);
 
-    content.removeChild(clockContainer);
-    content.appendChild(timerContainer);
+        content.removeChild(clockContainer);
+        content.appendChild(timerContainer);
+    });
 });
 
 endButton.addEventListener('click', () => {
-    endTime = new Date();
-    //if buttonContainer has child pausebutton, remove it
-    if (buttonContainer.contains(pauseButton)) {
-        buttonContainer.removeChild(pauseButton);
-    }
+    postData('https://example.com/answer', { answer: 42 }).then(data => {
+        console.log(data); // JSON data parsed by `data.json()` call
+        //@todo get Value from Backend
+        endTime = new Date();
+        //if buttonContainer has child pausebutton, remove it
+        if (buttonContainer.contains(pauseButton)) {
+            buttonContainer.removeChild(pauseButton);
+        }
 
-    //if buttonContainer has child resumebutton, remove it
-    if (buttonContainer.contains(resumeButton)) {
-        buttonContainer.removeChild(resumeButton);
-    }
+        //if buttonContainer has child resumebutton, remove it
+        if (buttonContainer.contains(resumeButton)) {
+            buttonContainer.removeChild(resumeButton);
+        }
 
-    buttonContainer.removeChild(endButton);
-    buttonContainer.appendChild(startButton);
+        buttonContainer.removeChild(endButton);
+        buttonContainer.appendChild(startButton);
 
-    content.removeChild(timerContainer);
-    content.appendChild(clockContainer);
+        content.removeChild(timerContainer);
+        content.appendChild(clockContainer);
+    });
 });
 
 function toHHMM (timer) {
@@ -88,8 +103,13 @@ function toHHMM (timer) {
     let hours   = Math.floor(sec_num / 3600);
     let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
 
-    if (hours   < 10) {hours   = "0"+hours;}
-    if (minutes < 10) {minutes = "0"+minutes;}
+    if (hours   < 10) {
+        hours   = "0"+hours;
+    }
+
+    if (minutes < 10) {
+        minutes = "0"+minutes;
+    }
 
     return hours+':'+minutes;
 }
@@ -126,3 +146,20 @@ function getTime() {
     }
 }
 setInterval(getTime, 1000);
+
+// Example POST method implementation:
+async function postData(url = '', data = {}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'omit', // include, *same-origin, omit
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(data)
+    });
+    return response.json();
+}
