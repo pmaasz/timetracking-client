@@ -7,8 +7,6 @@ const buttonContainer = document.getElementById('button-container');
 const clockContainer = document.getElementById('clock');
 const timerContainer = document.getElementById('timer');
 
-let timer = "00:00";
-
 let startTime;
 let pauseTime;
 let resumeTime;
@@ -28,12 +26,10 @@ let clock = new Date().toLocaleTimeString('de-DE', {
 });
 
 clockContainer.innerText = clock;
-timerContainer.innerText = timer;
 
 buttonContainer.removeChild(pauseButton);
 buttonContainer.removeChild(resumeButton);
 buttonContainer.removeChild(endButton);
-content.removeChild(timerContainer);
 
 startButton.addEventListener('click', () => {
     getRequest("http://0.0.0.0:9123/start").then(response => {
@@ -59,7 +55,7 @@ pauseButton.addEventListener('click', () => {
         let responseData = JSON.parse(response);
         currentWorkday = responseData.currentWorkday;
         currentPause = responseData.currentPause;
-        pauseTime = responseData.pauseStartTimestamp;
+        pauseTime = unixTimestampToLocalTime(responseData.pauseStartTimestamp);
 
         buttonContainer.removeChild(pauseButton);
         buttonContainer.removeChild(endButton);
@@ -79,7 +75,7 @@ resumeButton.addEventListener('click', () => {
         let responseData = JSON.parse(response);
         currentWorkday = responseData.currentWorkday;
         currentTimeEntry = responseData.currentTimeEntry;
-        resumeTime = responseData.resumeTimestamp;
+        resumeTime = unixTimestampToLocalTime(responseData.resumeTimestamp);
 
         buttonContainer.removeChild(resumeButton);
         buttonContainer.removeChild(endButton);
@@ -100,7 +96,7 @@ endButton.addEventListener('click', () => {
         currentWorkday = responseData.currentWorkday;
         pauseTotal = responseData.pauseTotal;
         hoursTotal = responseData.hoursTotal;
-        endTime = responseData.endTimestamp;
+        endTime = unixTimestampToLocalTime(responseData.endTimestamp);
 
         //if buttonContainer has child pausebutton, remove it
         if (buttonContainer.contains(pauseButton)) {
@@ -120,26 +116,10 @@ endButton.addEventListener('click', () => {
     });
 });
 
-function toHHMM (timer) {
-    timer = timer / 1000;
-    let sec_num = parseInt(timer, 10);
-    let hours   = Math.floor(sec_num / 3600);
-    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-
-    if (hours   < 10) {
-        hours   = "0"+hours;
-    }
-
-    if (minutes < 10) {
-        minutes = "0"+minutes;
-    }
-
-    return hours+':'+minutes;
-}
-
 function unixTimestampToLocalTime(timestamp) {
     let unixtimestamp = timestamp * 1000;
     let date = new Date(unixtimestamp);
+
     return date.toLocaleString('de-DE', {
         hour12: false,
         hour: '2-digit',
@@ -147,39 +127,13 @@ function unixTimestampToLocalTime(timestamp) {
     });
 }
 
-function updateClock() {
-    return new Date().toLocaleTimeString('de-DE', {
+function getTime() {
+    clock = new Date().toLocaleTimeString('de-DE', {
         hour12: false,
         hour: '2-digit',
         minute: '2-digit',
     });
-}
-
-function getTime() {
-    clock = updateClock();
-    clockContainer.innerHTML = clock;
-
-    if (startTime) {
-        //@todo here is a bug, timer is NaN
-        timer = clock - startTime;
-    } else if (resumeTime) {
-        let pause = resumeTime - pauseTime;
-        let beforePauseHours = clock - startTime;
-        let afterPauseHours = clock - resumeTime;
-
-        if(pause < (1000*60*30) && beforePauseHours >= (1000*60*60*6)) {
-            pause = 1000*60*30;
-        }
-
-        if(beforePauseHours + afterPauseHours >= (1000*60*60*9) && pause < (1000*60*45)) {
-            pause = 1000*60*45;
-        }
-
-        timer = beforePauseHours + afterPauseHours - pause;
-    }
-
-    timer.toString();
-    timerContainer.innerHTML = toHHMM(timer);
+    clockContainer.innerHTML = clock
 }
 setInterval(getTime, 1000);
 
