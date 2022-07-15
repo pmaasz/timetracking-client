@@ -8,10 +8,19 @@ const clockContainer = document.getElementById('clock');
 const timerContainer = document.getElementById('timer');
 
 let timer = "00:00";
+
 let startTime;
 let pauseTime;
 let resumeTime;
 let endTime;
+
+let currentWorkday;
+let currentTimeEntry;
+let currentPause;
+
+let pauseTotal;
+let hoursTotal;
+
 let clock = new Date().toLocaleTimeString('de-DE', {
     hour12: false,
     hour: '2-digit',
@@ -24,14 +33,14 @@ timerContainer.innerText = timer;
 buttonContainer.removeChild(pauseButton);
 buttonContainer.removeChild(resumeButton);
 buttonContainer.removeChild(endButton);
-
 content.removeChild(timerContainer);
 
 startButton.addEventListener('click', () => {
-    postData( "http://0.0.0.0:9123/start", { answer: 42 }).then(data => {
-        console.log(data); // JSON data parsed by `data.json()` call
-        //@todo get Value from Backend
-        startTime = new Date();
+    getRequest("http://0.0.0.0:9123/start").then(response => {
+        let responseData = JSON.parse(response);
+        startTime = unixTimestampToLocalTime(responseData.startTimestamp);
+        currentWorkday = responseData.currentWorkday;
+        currentTimeEntry = responseData.currentTimeEntry;
 
         buttonContainer.removeChild(startButton);
         buttonContainer.appendChild(pauseButton);
@@ -43,10 +52,14 @@ startButton.addEventListener('click', () => {
 });
 
 pauseButton.addEventListener('click', () => {
-    postData("http://0.0.0.0:9123/pause", { answer: 42 }).then(data => {
-        console.log(data); // JSON data parsed by `data.json()` call
-        //@todo get Value from Backend
-        pauseTime = new Date();
+    getRequest("http://0.0.0.0:9123/pause", {
+        "currentWorkday": currentWorkday,
+        "currentTimeEntry": currentTimeEntry,
+    }).then(response => {
+        let responseData = JSON.parse(response);
+        currentWorkday = responseData.currentWorkday;
+        currentPause = responseData.currentPause;
+        pauseTime = responseData.pauseStartTimestamp;
 
         buttonContainer.removeChild(pauseButton);
         buttonContainer.removeChild(endButton);
@@ -59,10 +72,14 @@ pauseButton.addEventListener('click', () => {
 });
 
 resumeButton.addEventListener('click', () => {
-    postData("http://0.0.0.0:9123/resume", { answer: 42 }).then(data => {
-        console.log(data); // JSON data parsed by `data.json()` call
-        //@todo get Value from Backend
-        resumeTime = new Date();
+    getRequest("http://0.0.0.0:9123/resume", {
+        "currentWorkday": currentWorkday,
+        "currentPause": currentPause,
+    }).then(response => {
+        let responseData = JSON.parse(response);
+        currentWorkday = responseData.currentWorkday;
+        currentTimeEntry = responseData.currentTimeEntry;
+        resumeTime = responseData.resumeTimestamp;
 
         buttonContainer.removeChild(resumeButton);
         buttonContainer.removeChild(endButton);
@@ -75,10 +92,16 @@ resumeButton.addEventListener('click', () => {
 });
 
 endButton.addEventListener('click', () => {
-    postData("http://0.0.0.0:9123/endButton", { answer: 42 }).then(data => {
-        console.log(data); // JSON data parsed by `data.json()` call
-        //@todo get Value from Backend
-        endTime = new Date();
+    getRequest("http://0.0.0.0:9123/end", {
+        "currentWorkday": currentWorkday,
+        "currentTimeEntry": currentTimeEntry,
+    }).then(response => {
+        let responseData = JSON.parse(response);
+        currentWorkday = responseData.currentWorkday;
+        pauseTotal = responseData.pauseTotal;
+        hoursTotal = responseData.hoursTotal;
+        endTime = responseData.endTimestamp;
+
         //if buttonContainer has child pausebutton, remove it
         if (buttonContainer.contains(pauseButton)) {
             buttonContainer.removeChild(pauseButton);
@@ -114,20 +137,35 @@ function toHHMM (timer) {
     return hours+':'+minutes;
 }
 
-function getTime() {
-    clock = new Date();
-    clockContainer.innerHTML = clock.toLocaleTimeString('de-DE', {
+function unixTimestampToLocalTime(timestamp) {
+    let unixtimestamp = timestamp * 1000;
+    let date = new Date(unixtimestamp);
+    return date.toLocaleString('de-DE', {
         hour12: false,
         hour: '2-digit',
         minute: '2-digit',
     });
+}
 
-    if (startTime && !pauseTime) {
-        timer = clock.getTime() - startTime.getTime();
+function updateClock() {
+    return new Date().toLocaleTimeString('de-DE', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
+
+function getTime() {
+    clock = updateClock();
+    clockContainer.innerHTML = clock;
+
+    if (startTime) {
+        //@todo here is a bug, timer is NaN
+        timer = clock - startTime;
     } else if (resumeTime) {
-        let pause = resumeTime.getTime() - pauseTime.getTime();
-        let beforePauseHours = clock.getTime() - startTime.getTime();
-        let afterPauseHours = clock.getTime() - resumeTime.getTime();
+        let pause = resumeTime - pauseTime;
+        let beforePauseHours = clock - startTime;
+        let afterPauseHours = clock - resumeTime;
 
         if(pause < (1000*60*30) && beforePauseHours >= (1000*60*60*6)) {
             pause = 1000*60*30;
@@ -138,28 +176,36 @@ function getTime() {
         }
 
         timer = beforePauseHours + afterPauseHours - pause;
-        timer.toString();
     }
 
-    if(timer){
-        timerContainer.innerHTML = toHHMM(timer);
-    }
+    timer.toString();
+    timerContainer.innerHTML = toHHMM(timer);
 }
 setInterval(getTime, 1000);
 
-// Example POST method implementation:
-async function postData(url = '', data = {}) {
-    // Default options are marked with *
-    const response = await fetch(url, {
-        method: 'POST',
-        mode: 'cors',
-        cache: 'no-cache',
-        credentials: 'omit', // include, *same-origin, omit
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        referrerPolicy: 'no-referrer',
-        body: JSON.stringify(data)
+const getRequest = (url, params) => {
+    let formData = new FormData();
+
+    if(params){
+        for (let key in params) {
+            formData.append(key, params[key]);
+            console.log(key + ": "+ params[key])
+        }
+    }
+
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                resolve(xhr.response);
+            } else {
+                reject(new Error(xhr.statusText));
+            }
+        };
+        xhr.onerror = () => {
+            reject(new Error('Network Error'));
+        };
+        xhr.send(formData);
     });
-    return response.json();
-}
+};
