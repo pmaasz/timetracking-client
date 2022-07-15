@@ -41,9 +41,6 @@ startButton.addEventListener('click', () => {
         buttonContainer.removeChild(startButton);
         buttonContainer.appendChild(pauseButton);
         buttonContainer.appendChild(endButton);
-
-        content.removeChild(clockContainer);
-        content.appendChild(timerContainer);
     });
 });
 
@@ -61,9 +58,6 @@ pauseButton.addEventListener('click', () => {
         buttonContainer.removeChild(endButton);
         buttonContainer.appendChild(resumeButton);
         buttonContainer.appendChild(endButton);
-
-        content.removeChild(timerContainer);
-        content.appendChild(clockContainer);
     });
 });
 
@@ -81,9 +75,6 @@ resumeButton.addEventListener('click', () => {
         buttonContainer.removeChild(endButton);
         //buttonContainer.appendChild(pauseButton); no second pause currently possible
         buttonContainer.appendChild(endButton);
-
-        content.removeChild(clockContainer);
-        content.appendChild(timerContainer);
     });
 });
 
@@ -110,9 +101,6 @@ endButton.addEventListener('click', () => {
 
         buttonContainer.removeChild(endButton);
         buttonContainer.appendChild(startButton);
-
-        content.removeChild(timerContainer);
-        content.appendChild(clockContainer);
     });
 });
 
