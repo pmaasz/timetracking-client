@@ -74,6 +74,7 @@ resumeButton.addEventListener('click', () => {
         buttonContainer.removeChild(resumeButton);
         buttonContainer.removeChild(endButton);
         //buttonContainer.appendChild(pauseButton); no second pause currently possible
+        endButton.style.width = "90%"
         buttonContainer.appendChild(endButton);
     });
 });
@@ -101,6 +102,7 @@ endButton.addEventListener('click', () => {
 
         buttonContainer.removeChild(endButton);
         buttonContainer.appendChild(startButton);
+        endButton.style.width = "40%"
     });
 });
 
